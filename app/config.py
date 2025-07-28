@@ -1,10 +1,4 @@
-from decouple import RepositoryEnv, Config
-from pathlib import Path
-
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-env_path = BASE_DIR / ".env"
-config = Config(RepositoryEnv(env_path))
+from decouple import config
 
 DB_NAME = config("DB_NAME")
 DB_USER = config("DB_USER")
@@ -13,3 +7,21 @@ DB_HOST = "localhost"
 DB_PORT = config("DB_PORT")
 
 SECRET_KEY = config("SECRET_KEY")
+FRONTEND_URL = config("FRONTEND_URL")
+
+ACCESS_TOKEN_EXPIRE_MINUTES = config("ACCESS_TOKEN_EXPIRE_MINUTES")
+REFRESH_TOKEN_EXPIRE_MINUTES = config("REFRESH_TOKEN_EXPIRE_MINUTES")
+
+ALGORITHM = config("ALGORITHM")
+
+
+
+# celery settings
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+EMAIL_ADDRESS = config("EMAIL_ADDRESS")
+EMAIL_PASSWORD = config("EMAIL_PASSWORD")
+SMTP_PORT = config("SMTP_PORT")
+SMTP_SERVER = config("SMTP_SERVER")
+
+FRONTEND_URL = config("FRONTEND_URL")
