@@ -1,10 +1,11 @@
 from passlib.context import CryptContext
-from jose import jwt
+from jose import jwt, JWTError
 from datetime import UTC, datetime, timedelta
 
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM, EMAIL_CONFIRM_EXPIRE_MINUTES
 
-pwd_context = CryptContext(schemes=["bcrypt"])
+# pwd_context = CryptContext(schemes=["bcrypt"])
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def hash_password(password: str):
     return pwd_context.hash(password)
@@ -13,11 +14,10 @@ def hash_password(password: str):
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-
-def create_jwt_token(data: dict, expires_delta: float | None = None):
+def create_jwt_token(data: dict, expires_in_minutes: float | None = None):
     delta = (
-        timedelta(minutes=expires_delta)
-        if expires_delta
+        timedelta(minutes=expires_in_minutes)
+        if expires_in_minutes
         else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     expire_time = datetime.now(UTC) + delta
@@ -28,10 +28,13 @@ def create_jwt_token(data: dict, expires_delta: float | None = None):
     return jwt_token
 
 
-def generate_confirmation_token(email):
-    # data will be encoded to jwt token
-    payload = {
-        "email": email,
-        "exp": datetime.now(UTC) + timedelta(hours=1),
-    }
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+def generate_confirmation_token(email: str) -> str:
+    return create_jwt_token({"sub": email}, expires_in_minutes=EMAIL_CONFIRM_EXPIRE_MINUTES)
+
+
+def decode_confirmation_token(token: str) -> str:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("sub") # return email
+    except JWTError:
+        raise ValueError("Invalid or expired confirmation token")

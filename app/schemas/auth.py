@@ -18,11 +18,15 @@ class UserRead(BaseModel):
     created_at: datetime
 
 
-class TokenIn():
+class LoginInput(BaseModel):
+    email: EmailStr
+    hashed_password: str
+
+
+class TokenIn(BaseModel):
     refresh_token: str
 
-
-class TokenOut():
+class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
-    token_type: str
+    token_type: str = "bearer"
