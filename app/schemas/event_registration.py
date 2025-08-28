@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from pydantic.config import ConfigDict
 
-from models.models import EventStatus
+from app.models.models import EventStatus
 
 class EventRegistrationCreate(BaseModel):
     user_id: int
@@ -17,6 +18,10 @@ class EventRegistrationRead(BaseModel):
     event_id: int
     registered_at: datetime
     status: EventStatus
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+
+class Participant_Out(BaseModel):
+    id: int
+    email: str
+    model_config = ConfigDict(from_attributes=True)

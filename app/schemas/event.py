@@ -9,7 +9,6 @@ class EventCreate(BaseModel):
     end_datetime: datetime
     location_url: str | None = None
     max_participant: int
-    organizer_id: int
     is_active: bool
     created_at: datetime
 
@@ -24,3 +23,11 @@ class EventListResponse(BaseModel):
     location_url: str | None = None
     is_active: bool
     created_at: datetime
+
+
+class EventOut(EventCreate):
+    id: int
+    organizer_id: int
+
+    class Config:
+        from_attributes = True
